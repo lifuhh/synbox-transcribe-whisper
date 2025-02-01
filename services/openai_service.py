@@ -78,6 +78,34 @@ class OpenAIService:
             yield utils.stream_message("error", "Storage service not configured")
             return
 
+        def get_working_cookies():
+            """Tries to get cookies from Chrome first, then Firefox."""
+            browsers = ["chrome", "firefox"]
+
+            for browser in browsers:
+                try:
+                    logger.info(f"Trying {browser} cookies...")
+                    test_ydl_opts = {"cookiefile": f"--cookies-from-browser {browser}"}
+                    with yt_dlp.YoutubeDL(test_ydl_opts) as ydl:
+                        result = ydl.extract_info(
+                            "https://www.youtube.com", download=False
+                        )
+                    if result:
+                        return (
+                            f"--cookies-from-browser {browser}"  # Return working option
+                        )
+                except Exception as e:
+                    logger.warning(f"{browser} cookies failed: {e}")
+
+            # Fallback to manually stored cookies
+            chrome_cookies = self.cookies_path / "chrome_cookies.txt"
+            firefox_cookies = self.cookies_path / "firefox_cookies.txt"
+
+            if chrome_cookies.exists():
+                return str(chrome_cookies)
+            elif firefox_cookies.exists():
+                return str(firefox_cookies)
+
         result = {
             "passed": False,
             "audio_file_path": None,
@@ -124,6 +152,10 @@ class OpenAIService:
                     "outtmpl": str(self.media_dir / "%(id)s.%(ext)s"),
                     "subtitlesoutopt": str(self.media_dir / "%(id)s.%(ext)s"),
                 }
+
+                cookie_option = get_working_cookies()
+                if cookie_option:
+                    ydl_opts["cookiefile"] = cookie_option
 
                 with yt_dlp.YoutubeDL(ydl_opts) as ydl:
                     error_code = ydl.download(
