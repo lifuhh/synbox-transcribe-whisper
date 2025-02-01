@@ -1,0 +1,18 @@
+
+Found external dependencies:
+appwrite
+dotenv
+flask
+flask_cors
+openai
+pytube
+werkzeug
+yt_dlp
+
+Local modules:
+config
+services
+utils
+
+Install command:
+pip install openai appwrite pytube flask flask_cors python-dotenv werkzeug yt_dlp

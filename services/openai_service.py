@@ -56,6 +56,7 @@ class OpenAIService:
         self.PROJECT_ROOT = Path(__file__).parent.parent
         # Create media directory relative to the application root
         self.media_dir = self.PROJECT_ROOT / "media"
+        self.cookies_path = self.PROJECT_ROOT / "utils"
         self.media_dir.mkdir(exist_ok=True, parents=True)
 
         self.client = OpenAI(
@@ -108,19 +109,19 @@ class OpenAIService:
                 ydl_opts = {
                     "match_filter": self.longer_than_eight_mins,
                     "format": "m4a/bestaudio/best",
-                    "writesubtitles": True,
+                    "writesubtitles": False,
+                    "cookiesfile": str(self.cookies_path),
                     "subtitlesformat": "vtt/srt/ass/ssa",
                     "subtitleslangs": ["ja.*"],
                     "break_on_reject": True,
                     "writeinfojson": True,
+                    "cookiefile": str(self.cookies_path / "ytcks.txt"),
                     "postprocessors": [
                         {
                             "key": "FFmpegExtractAudio",
                             "preferredcodec": "m4a",
                         }
                     ],
-                    # "outtmpl": "./media/%(id)s.%(ext)s",
-                    # "subtitlesoutopt": "./media/%(id)s.%(ext)s",
                     "outtmpl": str(self.media_dir / "%(id)s.%(ext)s"),
                     "subtitlesoutopt": str(self.media_dir / "%(id)s.%(ext)s"),
                 }
