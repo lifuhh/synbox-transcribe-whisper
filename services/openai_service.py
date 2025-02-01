@@ -110,12 +110,11 @@ class OpenAIService:
                     "match_filter": self.longer_than_eight_mins,
                     "format": "m4a/bestaudio/best",
                     "writesubtitles": True,
-                    "cookiesfile": str(self.cookies_path),
                     "subtitlesformat": "vtt/srt/ass/ssa",
                     "subtitleslangs": ["ja.*"],
                     "break_on_reject": True,
                     "writeinfojson": True,
-                    "cookiefile": str(self.cookies_path / "ytcks.txt"),
+                    # "cookiefile": str(self.cookies_path / "ytcks.txt"),
                     "postprocessors": [
                         {
                             "key": "FFmpegExtractAudio",
