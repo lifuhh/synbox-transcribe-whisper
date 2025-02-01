@@ -109,7 +109,7 @@ class OpenAIService:
                 ydl_opts = {
                     "match_filter": self.longer_than_eight_mins,
                     "format": "m4a/bestaudio/best",
-                    "writesubtitles": False,
+                    "writesubtitles": True,
                     "cookiesfile": str(self.cookies_path),
                     "subtitlesformat": "vtt/srt/ass/ssa",
                     "subtitleslangs": ["ja.*"],
