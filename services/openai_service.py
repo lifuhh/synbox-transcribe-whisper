@@ -85,15 +85,15 @@ class OpenAIService:
             for browser in browsers:
                 try:
                     logger.info(f"Trying {browser} cookies...")
-                    test_ydl_opts = {"cookiefile": f"--cookies-from-browser {browser}"}
+                    test_ydl_opts = {
+                        "cookiesfrombrowser": (browser,)  # Tuple with browser name
+                    }
                     with yt_dlp.YoutubeDL(test_ydl_opts) as ydl:
                         result = ydl.extract_info(
                             "https://www.youtube.com", download=False
                         )
-                    if result:
-                        return (
-                            f"--cookies-from-browser {browser}"  # Return working option
-                        )
+                        if result:
+                            return {"cookiesfrombrowser": (browser,)}
                 except Exception as e:
                     logger.warning(f"{browser} cookies failed: {e}")
 
@@ -102,9 +102,11 @@ class OpenAIService:
             firefox_cookies = self.cookies_path / "firefox_cookies.txt"
 
             if chrome_cookies.exists():
-                return str(chrome_cookies)
+                return {"cookiefile": str(chrome_cookies)}
             elif firefox_cookies.exists():
-                return str(firefox_cookies)
+                return {"cookiefile": str(firefox_cookies)}
+
+            return {}  # No valid cookies found
 
         result = {
             "passed": False,
@@ -153,9 +155,7 @@ class OpenAIService:
                     "subtitlesoutopt": str(self.media_dir / "%(id)s.%(ext)s"),
                 }
 
-                cookie_option = get_working_cookies()
-                if cookie_option:
-                    ydl_opts["cookiefile"] = cookie_option
+                ydl_opts.update(get_working_cookies())
 
                 with yt_dlp.YoutubeDL(ydl_opts) as ydl:
                     error_code = ydl.download(
