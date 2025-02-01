@@ -144,7 +144,7 @@ class OpenAIService:
                     "subtitleslangs": ["ja.*"],
                     "break_on_reject": True,
                     "writeinfojson": True,
-                    # "cookiefile": str(self.cookies_path / "ytcks.txt"),
+                    "cookiefile": str(self.cookies_path / "ytcks.txt"),
                     "postprocessors": [
                         {
                             "key": "FFmpegExtractAudio",
@@ -155,7 +155,7 @@ class OpenAIService:
                     "subtitlesoutopt": str(self.media_dir / "%(id)s.%(ext)s"),
                 }
 
-                ydl_opts.update(get_working_cookies())
+                # ydl_opts.update(get_working_cookies())
 
                 with yt_dlp.YoutubeDL(ydl_opts) as ydl:
                     error_code = ydl.download(
